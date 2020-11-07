@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <style>
+        .s-width{
+            text-align:center;
+            line-height:40px;
+            width: 150px;
+            height:40px;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border-radius:5px;
+        }
+        .noPaddingLeft{
+            padding-left: 0px;
+        }
+        .modal-header{
+            border-bottom: 0px;
+        }
+        .modal-footer{
+            border-top: 0px;
+        }
+
+        /*.s-width:hover{*/
+            /*transform:translateX(5px);*/
+            /*transform:translateX(5px);*/
+            /*transform:translateY(5px);*/
+        /*}*/
+    </style>
+</head>
+<body id="homewokrContainer">
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">木叶教办</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" th:each="cookie :${#httpServletRequest.getCookies()}"
+                               th:if="${cookie.getName().equals('name')}"
+                               th:text="${cookie.getValue()}+'，您好'">
+                            </a>
+                        </li>
+                        <input type="hidden" id="accountName" th:each="cookie:${#httpServletRequest.getCookies()}" th:if="${cookie.getName().equals('account')}" th:value="${cookie.getValue()}"/>
+                        <li>
+                            <a href="/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;登出</a>
+                        </li>
+                        <li>
+                            <a href="/changePwd">修改密码</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <div class="panel-group" id="panel-594187">
+                        <div class="panel panel-default" th:each="m : ${menu}">
+                            <div class="panel-heading" th:if="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-826081'+${m.id}">用 户 管 理</a>
+                            </div>
+                            <div  th:if="${m.title} ne ${pageTitle}" th:id="'panel-element-826081'+${m.id}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+
+                            <div class="panel-heading" th:unless="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-792346'+${m.id}" aria-expanded="true">权 限 管 理</a>
+                            </div>
+                            <div th:unless="${m.title} ne ${pageTitle}" th:id="'panel-element-792346'+${m.id}" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 column">
+                    <ul class="breadcrumb">
+                        <li>
+                            作业管理
+                        </li>
+                        <li class="active">
+                            作业列表
+                        </li>
+                        <!--<li class="active">-->
+                        <!--Data-->
+                        <!--</li>-->
+                    </ul>
+
+                    <!--<div class="row clearfix">-->
+
+                        <!--<div class="col-md-12 column" style="margin-bottom: 20px;">-->
+                            <!--<div class="col-sm-2 noPaddingLeft">-->
+                                <!--<select id="filmTypeId" name="select" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">-->
+                                    <!--　　<option value="">影视剧类型</option>-->
+                                    <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 1}" th:selected="${c.id == stageRequestVo.filmTypeId}?true:false">0</option>-->
+                                    <!--&lt;!&ndash;　　<option value="1">1</option>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;　　<option value="2">2</option>&ndash;&gt;-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="col-sm-2 noPaddingLeft">-->
+                                <!--<select id="stageStyleId" name="select" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">-->
+                                    <!--　　<option value="">场景风格</option>-->
+                                    <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 2}" th:selected="${c.id == stageRequestVo.stageStyleId}?true:false">0</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="col-sm-4 column"></div>-->
+                            <!--<div class="col-md-2 column"></div>-->
+                            <!--<div class="col-md-2 column">-->
+                                <!--<button type="button" class="btn btn-primary" onclick="openSocket();">新增场景</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+
+                    <div class="row clearfix">
+
+                        <!--<div class="col-md-12 column">-->
+
+                            <!--<div class="col-md-10 column"></div>-->
+                            <!--<div class="col-md-2 column">-->
+                                <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearGradeMsg();">新增作业</button>-->
+                                <!--&lt;!&ndash;<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearRotationPicMsg();">新增轮播图</button>&ndash;&gt;-->
+
+                            <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                    <!--<div class="row clearfix" style="height: 20px;"></div>-->
+
+                    <div>
+                        <input type="hidden" id="nowId">
+                        <input type="hidden" id="nowIda">
+                        <input type="hidden" id="homeworkId" th:value="${homeworkId}">
+                        <div th:each="a : ${homeworkRecordList}" th:vala="${a.id}" th:class="${a.record_status == 0?'s-width label-warning':'s-width label-success'}" th:id="${a.tcode}" th:onmousedown="'xsl(this)'">
+                            <span th:text="${a.seat_number+'号  '+a.name}">
+                            </span>
+                            <span th:id="${a.id+'badge'}" class="badge pull-right" th:text="${a.level == 0?'未评价':(a.level == 1?'优':(a.level == 2?'错误多':'未完成'))}" th:style="${a.level == 0?'':(a.level == 1?'color:greenyellow;':(a.level == 2?'color:#ff1a1a;':'color:yellow;'))}">42</span>
+                        </div>
+                        <!--<table class="table">-->
+                            <!--<thead>-->
+                            <!--<tr>-->
+                                <!--<th width="150px">-->
+                                    <!--座号-->
+                                <!--</th>-->
+                                <!--<th width="150px">-->
+                                    <!--姓名-->
+                                <!--</th>-->
+                                <!--<th width="150px">-->
+                                    <!--交作业状态-->
+                                <!--</th>-->
+                                <!--<th>-->
+                                    <!--操作-->
+                                <!--</th>-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+                            <!--<tbody>-->
+                            <!--<tr th:each="a : ${homeworkRecordList}">-->
+                                <!--<td>-->
+                                    <!--<span th:text="${a.seat_number}" class="label label-warning">标签</span>-->
+                                <!--</td>-->
+                                <!--<td th:text="${a.name != ''?a.name:'暂无数据'}">-->
+                                    <!--15060606060-->
+                                <!--</td>-->
+                                <!--<td th:text="${a.record_status != ''?a.record_status:'暂无数据'}">-->
+                                    <!--15060606060-->
+                                <!--</td>-->
+                                <!--<td>-->
+                                    <!--&lt;!&ndash;<button class="btn btn-primary" type="button" th:onclick="'deleteGrade('+${a.id}+')'">登记</button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<button class="btn btn-primary" type="button" th:onclick="'deleteGrade('+${a.id}+')'">删除</button>&ndash;&gt;-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--</tbody>-->
+                        <!--</table>-->
+                    </div>
+                    <!--<div class="row clearfix">-->
+                        <!--<input type="hidden" id="pageNum" th:value="${homeworkRecordList.pageNum}"/>-->
+                        <!--<input type="hidden" id="pageSize" th:value="${homeworkRecordList.pageSize}"/>-->
+                        <!--<input type="hidden" id="pages" th:value="${homeworkRecordList.pages}"/>-->
+                        <!--<div class="col-md-4 column">-->
+                            <!--<span style="height: inherit;">共   <span th:text="${homeworkRecordList.total}">5</span>    条记录</span>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-8 column" th:if="${homeworkRecordList.total > 0}">-->
+                            <!--<ul class="pagination" style="margin: 0 0;">-->
+                                <!--<th:block th:if="${homeworkRecordList.pageNum > 1}">-->
+                                    <!--<li>-->
+                                        <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum='+${homeworkRecordList.pageNum-1}+${params}">上一页</a>-->
+                                    <!--</li>-->
+                                <!--</th:block>-->
+                                <!--<th:block th:if="${homeworkRecordList.pages < 9}">-->
+                                    <!--<li th:each="dayCyc : ${#numbers.sequence(1,homeworkRecordList.pages)}" th:class="${dayCyc == homeworkRecordList.pageNum}? 'active' : ''">-->
+                                        <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum='+${dayCyc}+${params}" th:text="${dayCyc}">1</a>-->
+                                    <!--</li>-->
+                                <!--</th:block>-->
+                                <!--<th:block th:if="${homeworkRecordList.pages >= 9}">-->
+                                    <!--<li th:if="${homeworkRecordList.pageNum >= 4}" th:class="${1 == homeworkRecordList.pageNum}? 'active' : ''">-->
+                                        <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum=1'">1</a>-->
+                                    <!--</li>-->
+                                    <!--<li th:if="${homeworkRecordList.pageNum <= 3}" th:each="dayCyc : ${#numbers.sequence(1,5)}" th:class="${dayCyc == homeworkRecordList.pageNum}? 'active' : ''">-->
+                                        <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum='+${dayCyc}" th:text="${dayCyc}">1</a>-->
+                                    <!--</li>-->
+                                    <!--<li th:if="${homeworkRecordList.pageNum >= 5}">-->
+                                        <!--<span>...</span>-->
+                                    <!--</li>-->
+                                    <!--<th:block th:if="${homeworkRecordList.pageNum >= 4 and homeworkRecordList.pageNum <= homeworkRecordList.pages-3}">-->
+                                        <!--<li th:each="dd : ${#numbers.sequence(-2,2)}" th:class="${homeworkRecordList.pageNum+dd == homeworkRecordList.pageNum}? 'active' : ''">-->
+                                            <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum='+${homeworkRecordList.pageNum+dd}" th:text="${homeworkRecordList.pageNum+dd}">1</a>-->
+                                        <!--</li>-->
+                                    <!--</th:block>-->
+                                    <!--<li th:if="${homeworkRecordList.pageNum <= homeworkRecordList.pages - 4}">-->
+                                        <!--<span>...</span>-->
+                                    <!--</li>-->
+                                    <!--<li th:if="${homeworkRecordList.pageNum >= homeworkRecordList.pages - 2}" th:each="dayCyc : ${#numbers.sequence(-4,0)}" th:class="${homeworkRecordList.pages + dayCyc == homeworkRecordList.pageNum}? 'active' : ''">-->
+                                        <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum='+${homeworkRecordList.pages + dayCyc}" th:text="${homeworkRecordList.pages + dayCyc}">1</a>-->
+                                    <!--</li>-->
+                                    <!--<li th:if="${homeworkRecordList.pageNum <= homeworkRecordList.pages - 3}" th:class="${homeworkRecordList.pages == homeworkRecordList.pageNum}? 'active' : ''">-->
+                                        <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum='+${homeworkRecordList.pages}" th:text="${homeworkRecordList.pages}">1</a>-->
+                                    <!--</li>-->
+                                <!--</th:block>-->
+                                <!--<th:block th:if="${homeworkRecordList.pageNum < homeworkRecordList.pages}">-->
+                                    <!--<li>-->
+                                        <!--<a th:href="'getHomeworkList?pageSize='+${homeworkRecordList.pageSize}+'&pageNum='+${homeworkRecordList.pageNum+1}">下一页</a>-->
+                                    <!--</li>-->
+                                <!--</th:block>-->
+                                <!--<li>-->
+                                    <!--<div class="btn-group">-->
+                                        <!--<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" th:text="${homeworkRecordList.pageSize}+'条/页'">10条/页-->
+                                            <!--<span class="caret"></span>-->
+                                        <!--</button>-->
+                                        <!--<ul class="dropdown-menu" role="menu">-->
+                                            <!--<li>-->
+                                                <!--<a th:href="'getHomeworkList?pageSize=10'">10条/页</a>-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<a th:href="'getHomeworkList?pageSize=20'">20条/页</a>-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<a th:href="'getHomeworkList?pageSize=30'">30条/页</a>-->
+                                            <!--</li>-->
+                                            <!--&lt;!&ndash;<li class="divider"></li>&ndash;&gt;-->
+                                            <!--<li>-->
+                                                <!--<a th:href="'getHomeworkList?pageSize=40'">40条/页</a>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                                <!--<li>-->
+                                    <!--跳至<input id="jumpPage" type="text" class="form-control" style="width: 50px;display: inline-block;"/>页-->
+                                <!--</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                </div>
+
+                <!--模态框（Modal） -->
+                <!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+                    <!--<div class="modal-dialog">-->
+                        <!--<div class="modal-content">-->
+                            <!--<div class="modal-header">-->
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                                <!--<h4 class="modal-title" id="myModalLabel">新增级</h4>-->
+                            <!--</div>-->
+                            <!--<div class="modal-body">-->
+                                <!--<form class="form-horizontal"  id="gradeForm" enctype="multipart/form-data">-->
+                                    <!--&lt;!&ndash;<input type="hidden" id="rotationPicId"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<input type="hidden" id="picUrl"/>&ndash;&gt;-->
+                                    <!--<div class="form-group">-->
+                                        <!--<label for="gradeNum" class="col-sm-4 control-label">*年级序号：</label>-->
+                                        <!--<div class="col-sm-8">-->
+                                            <!--<input type="text" class="form-control" name="gradeNum" id="gradeNum" placeholder="">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="form-group">-->
+                                        <!--<label for="grade" class="col-sm-4 control-label">*年级：</label>-->
+                                        <!--<div class="col-sm-8">-->
+                                            <!--<input type="text" class="form-control" name="grade" id="grade" placeholder="">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</form>-->
+                            <!--</div>-->
+                            <!--<div class="modal-footer">-->
+                                <!--<button type="button" class="btn btn-default" data-dismiss="modal" id="closeAddAdmin">取消</button>-->
+                                <!--<button type="button" class="btn btn-primary" onclick="insertGrade();">确定</button>-->
+                            <!--</div>-->
+                        <!--</div>&lt;!&ndash; /.modal-content &ndash;&gt;-->
+                    <!--</div>&lt;!&ndash; /.modal &ndash;&gt;-->
+                <!--</div>-->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/jquery/jquery.validate.min.js}"></script>
+<style>
+    .error{
+        color:red;
+    }
+</style>
+<script>
+    $().ready(function() {
+        $("#gradeForm").validate({
+            rules: {
+                homePageTitle: {
+                    required:true
+                },
+                homePageTitleEn: {
+                    required:true
+                },
+                homePageAdd:{
+                    required:true
+                },
+                homePageAddEn:{
+                    required:true
+                }
+            },
+            messages: {
+                homePageTitle: {
+                    required:"首页压字(中文)不能为空",
+                },
+                homePageTitleEn: {
+                    required:"首页压字(英文)不能为空",
+                },
+                homePageAdd: {
+                    required:"地点(中文)",
+                },
+                homePageAddEn: {
+                    required:"地点(英文)"
+                }
+            }
+        });
+        jQuery.validator.addMethod("english", function(value, element) {
+            var chrnum = /^([0-9a-zA-Z\s\.\,]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入英文");
+        jQuery.validator.addMethod("chinese", function(value, element) {
+            var chrnum = /^([0-9\u4E00-\u9FA5\，\。\？\！\；\：\“\”\《\》]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入中文");
+    });
+
+//    $(function () {
+//        var webSocket = new WebSocket("ws://localhost:8090/ws");
+//        webSocket.onmessage = function (ev) {
+////            $("#push").append("<p>" + ev.data +"</p>");
+//            console.log("12344");
+//        }
+//    });
+
+    function newStage() {
+        window.location.href = 'newStage';
+    }
+    function clearGradeClassesMsg() {
+//        $("#myModalLabel").text("新增轮播图");
+//        $("#rotationPicId").val("");
+//        $("#picName").val("");
+//        $("#requestUrl").val("");
+//        $("#order").val("");
+//        $("#picUrl").val("");
+//        $("#showPic").html("");
+//        var str = "<option value=''>选择身份</option>";
+    }
+    $("#country").change(function(){
+        var opt=$("#country").val();
+        $.ajax({
+            url: "/category/getSubCategoryList",
+            method: "get",
+            data: {
+                id:opt
+            },
+            success: function(result){
+                if(result.status == 1){
+                    var str = "<option value=''>二级地区</option>";
+                    var msg = result.data;
+                    for(var i=0;i<msg.length;i++){
+                        str += "<option value='"+msg[i].id+"'>"+msg[i].name+"</option>";
+                    }
+                    $("#province").html(str);
+                    $("#provinceDiv").show();
+                }else{
+                    $("#province").html("");
+                    $("#provinceDiv").hide();
+                    $("#city").html("");
+                    $("#cityDiv").hide();
+                }
+            }
+        });
+    });
+
+    $("#province").change(function(){
+        var opt=$("#province").val();
+        $.ajax({
+            url: "/category/getSubCategoryList",
+            method: "get",
+            data: {
+                id:opt
+            },
+            success: function(result){
+                if(result.status == 1){
+                    var str = "<option value=''>三级地区</option>";
+                    var msg = result.data;
+                    for(var i=0;i<msg.length;i++){
+                        str += "<option value='"+msg[i].id+"'>"+msg[i].name+"</option>";
+                    }
+                    $("#city").html(str);
+                    $("#cityDiv").show();
+                }else{
+                    $("#city").html("");
+                    $("#cityDiv").hide();
+                }
+            }
+        });
+    });
+
+    $("#stageMainTypeId").change(function(){
+        var opt=$("#stageMainTypeId").val();
+        $.ajax({
+            url: "/category/getSubCategoryList",
+            method: "get",
+            data: {
+                id:opt
+            },
+            success: function(result){
+                if(result.status == 1){
+                    var str = "<option value=''>二级场景</option>";
+                    var msg = result.data;
+                    for(var i=0;i<msg.length;i++){
+                        str += "<option value='"+msg[i].id+"'>"+msg[i].name+"</option>";
+                    }
+                    $("#stageSubTypeId").html(str);
+                    $("#stageSubTypeIdDiv").show();
+                }else{
+                    $("#stageSubTypeId").html("");
+                    $("#stageSubTypeIdDiv").hide();
+                }
+            }
+        });
+    });
+
+    $(document).keydown(function(event){
+        if(event.keyCode == 13){
+            if(isNumber($("#jumpPage").val())){//非数字不能跳转
+                window.location.href = 'getHomeworkList?idOrName='+$("#idOrName").val()+'&pageSize='+$("#pageSize").val()+'&pageNum='+$("#jumpPage").val();
+            }
+        }
+    });
+
+    function recommendStage(id) {
+        $("#stageId").val(id);
+    }
+    function cancelRecommendStage(id) {
+        $("#cancelStageId").val(id);
+    }
+    function stopRecommendStage(id) {
+        $("#stopStageId").val(id);
+    }
+    function insertGrade(){
+        if(!$("#gradeForm").validate().form()) {
+            return false;
+        }
+        $.ajax({
+            url: "/gradeClass/insertGrade",
+            method: "post",
+            data: {
+                gradeNum:$("#gradeNum").val(),
+                grade:$("#grade").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getGradeList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+
+    function deleteGrade(id) {
+        var result = confirm("确认删除班级?");
+        if(result){
+            $.ajax({
+                url: "/gradeClass/deleteGrade",
+                method: "get",
+                data:{
+                    gradeId:id
+                },
+                success: function(result){
+                    if(result.status == 1){
+                        alert(result.message);
+                        window.location.href = 'getGradeList';
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+    }
+    function enddingHomePageStageRecommend(){
+
+        $.ajax({
+            url: "/stage/stopStageById",
+            method: "post",
+            data: {
+                stageId:$("#stopStageId").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getHomeworkList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+    function cancelHomePageStageRecommend() {
+        $.ajax({
+            url: "/stage/cancelRecommendStageToHomePage",
+            method: "post",
+            data: {
+                stageId:$("#cancelStageId").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getHomeworkList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+    //判断是否为数字方法
+    function isNumber(val){
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        if(regPos.test(val) || regNeg.test(val)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function getSubjectList() {
+        var url = 'getSubjectList?pageSize='+$("#pageSize").val()+'&idOrName='+$("#idOrName").val().trim()+'&processStatus='+$("#processStatus").val();
+        if($("#country").val() != '' && $("#country").val() != null){
+            url += '&country='+$("#country").val();
+        }
+        if($("#province").val() != '' && $("#province").val() != null){
+            url += '&province='+$("#province").val();
+        }
+        if($("#city").val() != '' && $("#city").val() != null){
+            url += '&city='+$("#city").val();
+        }
+        if($("#filmTypeId").val() != '' && $("#filmTypeId").val() != null){
+            url += '&filmTypeId='+$("#filmTypeId").val();
+        }
+        if($("#stageMainTypeId").val() != '' && $("#stageMainTypeId").val() != null){
+            url += '&stageMainTypeId='+$("#stageMainTypeId").val();
+        }
+        if($("#stageSubTypeId").val() != '' && $("#stageSubTypeId").val() != null){
+            url += '&stageSubTypeId='+$("#stageSubTypeId").val();
+        }
+        if($("#stageStyleId").val() != '' && $("#stageStyleId").val() != null){
+            url += '&stageStyleId='+$("#stageStyleId").val();
+        }
+        window.location.href = url;
+    }
+    function getStageDetail(id) {
+        window.location.href = 'getStageDetail?id='+id;
+    }
+    function updateStage(id) {
+        window.location.href = 'updateStage?stageId='+id;
+    }
+</script>
+<script>
+    var socket;
+    function openSocket() {
+        if(typeof(WebSocket) == "undefined") {
+            console.log("您的浏览器不支持WebSocket");
+        }else{
+            console.log("您的浏览器支持WebSocket");
+            //实现化WebSocket对象，指定要连接的服务器地址与端口  建立连接
+            //等同于socket = new WebSocket("ws://localhost:8888/xxxx/im/25");
+            //var socketUrl="${request.contextPath}/im/"+$("#userId").val();
+            var socketUrl="http://211.159.227.211:8090/imserver/"+$("#accountName").val();
+//            var socketUrl="http://localhost:8090/imserver/"+$("#accountName").val();
+//            var socketUrl="http://211.159.227.211:8090/imserver/"+$("#accountName").val();
+            socketUrl=socketUrl.replace("https","ws").replace("http","ws");
+            console.log(socketUrl);
+            if(socket!=null){
+                socket.close();
+                socket=null;
+            }
+            socket = new WebSocket(socketUrl);
+            //打开事件
+            socket.onopen = function() {
+                console.log("websocket已打开");
+                //socket.send("这是来自客户端的消息" + location.href + new Date());
+            };
+            //获得消息事件
+            socket.onmessage = function(msg) {
+                console.log(msg.data);
+//                alert(msg.data);
+                $("#"+msg.data).removeClass("label-warning");
+                $("#"+msg.data).addClass("label-success");
+                //发现消息进入    开始处理前端触发逻辑
+            };
+            //关闭事件
+            socket.onclose = function() {
+                console.log("websocket已关闭");
+            };
+            //发生了错误事件
+            socket.onerror = function() {
+                console.log("websocket发生了错误");
+            }
+        }
+    }
+    function sendMessage() {
+        if(typeof(WebSocket) == "undefined") {
+            console.log("您的浏览器不支持WebSocket");
+        }else {
+            console.log("您的浏览器支持WebSocket");
+            console.log('{"toUserId":"'+$("#toUserId").val()+'","contentText":"'+$("#contentText").val()+'"}');
+            socket.send('{"toUserId":"'+$("#toUserId").val()+'","contentText":"'+$("#contentText").val()+'"}');
+        }
+    }
+    openSocket();
+</script>
+<script>
+    //window.onload = function () {
+    //  var one = document.getElementById('one');
+    // mousedown鼠标事件：当用户点击鼠标在元素上就会触发该事件
+    //  one.addEventListener('mousedown', function () {
+    // mousemove 鼠标事件：当鼠标指针在元素上移动就会触发此事件
+    /**
+     * e：指事件，在火狐浏览器中事件用window.event,所以只有把 event
+     *    所以只有把event传给函数使用。为了兼容火狐和浏览器，一般会在函数里自动
+     *    重新赋值: e = e || window.event;
+     */
+    //     document.addEventListener('mousemove', function (e) {
+    //         one.style.left = e.clientX + 'px';
+    //         one.style.top = e.clientY + 'px';
+    //     });
+    //  });
+    //   }
+
+//    window.onload=function(){
+
+        //document.onmousedown=function(ev){
+        //   var oEvent=ev||event;
+
+        //canvas.addEventListener('mousedown', xsl);
+
+        //canvas.addEventListener('mouseup', momo);
+        // }
+//        var ddss = document.getElementsByClassName("s-width");
+//        alert(ddss.length);
+//        for(var i=0;i<ddss.length;i++){
+//            ddss[i].addEventListener('mousedown', xsl);
+//        }
+//        ddss.addEventListener('mousedown', xsl);
+//    }
+    var x,y,ctx,canvas,body;
+    function xsl(t){
+        $("#nowId").val($(t).attr('vala'));
+        $("#nowIda").val($(t).attr('id'));
+
+        canvas = document.createElement('canvas');
+
+//        var con = document.getElementById("homewokrContainer");
+        canvas.id = "CursorLayer";
+        canvas.style.left = 0;
+        canvas.style.top = 0;
+        canvas.width = $("#homewokrContainer").width();
+        canvas.height = $("#homewokrContainer").height()+200;
+        canvas.style.zIndex = 8;
+        canvas.style.position = "absolute";
+
+        body = document.getElementsByTagName("body")[0];
+        body.appendChild(canvas);
+
+        cursorLayer = document.getElementById("CursorLayer");
+
+        console.log(cursorLayer);
+
+        ctx = canvas.getContext("2d");
+
+        var posX = 0, posY = 0;
+        var event = event || window.event;
+        if (event.pageX || event.pageY) {
+            posX = event.pageX;
+            posY = event.pageY;
+        } else if (event.clientX || event.clientY) {
+            posX = event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
+            posY = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+
+        x = posX;
+        y = posY;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.beginPath();
+        ctx.fillStyle = '#5cb85c';
+        ctx.moveTo(x,y);
+        ctx.arc(x,y,50,0.25*Math.PI,0.5*Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = '#f0ad4e';
+        ctx.moveTo(x,y);
+        ctx.arc(x,y,50,0.5*Math.PI,0.75*Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = '#ffff00';
+        ctx.moveTo(x,y);
+        ctx.arc(x,y,50,0.75*Math.PI,1.25*Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = '#ff1a1a';
+        ctx.moveTo(x,y);
+        ctx.arc(x,y,50,1.25*Math.PI,1.75*Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = '#adff2f';
+        ctx.moveTo(x,y);
+        ctx.arc(x,y,50,1.75*Math.PI,0.25*Math.PI);
+        ctx.fill();
+
+        canvas.addEventListener('mousemove', qwer);
+        canvas.addEventListener('mouseup', momo);
+    }
+
+    function momo(e) {
+
+        var posX = 0, posY = 0;
+        var event = event || window.event;
+        if (event.pageX || event.pageY) {
+            posX = event.pageX;
+            posY = event.pageY;
+        } else if (event.clientX || event.clientY) {
+            posX = event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
+            posY = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+        jiaodu = getAngle(x,y,posX,posY);
+        if(jiaodu < 45 || jiaodu > 315){
+            setHomeworkStatus($("#nowId").val(),2,2);
+        }else if(jiaodu > 45 && jiaodu < 135){
+            setHomeworkStatus($("#nowId").val(),1,2);
+        }else if(jiaodu > 135 && jiaodu < 180){
+            setHomeworkStatus($("#nowId").val(),1,1);
+        }else if(jiaodu > 180 && jiaodu < 225){
+            setHomeworkStatus($("#nowId").val(),0,1);
+        }else if(jiaodu > 225 && jiaodu < 315){
+            setHomeworkStatus($("#nowId").val(),3,2);
+        }
+
+
+        canvas.removeEventListener('mousemove',qwer)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        $("#CursorLayer").remove();
+
+        //alert(getAngle(x,y,e.clientX,e.clientY));
+        //alert(x+'::'+y);
+        //alert(e.clientX+'::'+e.clientY);
+        //r = Math.sqrt(Math.pow(Math.abs(x-e.clientX),2)+Math.pow(Math.abs(y-e.clientY),2));
+        //alert(r);
+        //alert((e.clientX-x)/r);
+
+        //X坐标=a + Math.sin(2*Math.PI / 360) * r
+        //alert(Math.sin(2*Math.PI / 360));
+        //alert(Math.asin(-0.2));
+    }
+    function setHomeworkStatus(id,status,type){
+        $.ajax({
+            url: "/homework/setHomeworkStatus",
+            method: "post",
+
+            dataType : "json",
+            data: {
+                id:id,
+                recordStatus:status,
+                level:status,
+                type:type
+            },
+            success: function(result){
+                if(result.status == 1){
+                    var id = "#"+$("#nowIda").val();
+                    if(type == 1){//交作业情况
+                        $(id).removeClass();
+                        if(status == 1){//已交
+                            $(id).addClass('s-width label-success');
+                        }else{//未交
+                            $(id).addClass('s-width label-warning');
+                        }
+                    }else{//作业评价
+                        id = "#"+$("#nowId").val() + 'badge';
+                        if(status == 1){//优
+                            $(id).text('优');
+                            $(id).css('color','greenyellow');
+                        }else if(status == 2){//错误多
+                            $(id).text('错误多');
+                            $(id).css('color','#ff1a1a');
+                        }else{//未完成
+                            $(id).text('未完成');
+                            $(id).css('color','yellow');
+                        }
+                    }
+                }else{
+                    console.log('error');
+                }
+                $("#nowId").val('');
+                $("#nowIda").val('');
+            }
+        });
+    }
+    function qwer(e) {
+        //ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var posX = 0, posY = 0;
+        var event = event || window.event;
+        if (event.pageX || event.pageY) {
+            posX = event.pageX;
+            posY = event.pageY;
+        } else if (event.clientX || event.clientY) {
+            posX = event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
+            posY = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+        jiaodu = getAngle(x,y,posX,posY);
+        if(jiaodu < 45 || jiaodu > 315){
+            //ctx.beginPath();
+            //ctx.fillStyle = '#f0ad4e';
+            //ctx.arc(x,y,60,1*Math.PI,2*Math.PI);
+            //ctx.fill();
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.fillStyle = '#5cb85c';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.25*Math.PI,0.5*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#f0ad4e';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.5*Math.PI,0.75*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ffff00';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.75*Math.PI,1.25*Math.PI);
+            ctx.fill();
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = '#ff1a1a';
+            ctx.shadowBlur=5;
+            ctx.shadowOffsetY=-5;
+            ctx.shadowColor="black";
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,55,1.25*Math.PI,1.75*Math.PI);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#adff2f';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.75*Math.PI,0.25*Math.PI);
+            ctx.fill();
+        }else if(jiaodu > 45 && jiaodu < 135){
+            //ctx.beginPath();
+            //ctx.fillStyle = '#5cb85c';
+            //ctx.arc(x,y,60,0,1*Math.PI);
+            //ctx.fill();
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.fillStyle = '#5cb85c';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.25*Math.PI,0.5*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#f0ad4e';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.5*Math.PI,0.75*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ffff00';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.75*Math.PI,1.25*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ff1a1a';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.25*Math.PI,1.75*Math.PI);
+            ctx.fill();
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = '#adff2f';
+            ctx.shadowBlur=5;
+            ctx.shadowOffsetX=5;
+            ctx.shadowColor="black";
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,55,1.75*Math.PI,0.25*Math.PI);
+            ctx.fill();
+            ctx.restore();
+        }else if(jiaodu > 135 && jiaodu < 180){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = '#5cb85c';
+            ctx.shadowBlur=5;
+            ctx.shadowOffsetX=5;
+            ctx.shadowOffsetY=5;
+            ctx.shadowColor="black";
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,55,0.25*Math.PI,0.5*Math.PI);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#f0ad4e';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.5*Math.PI,0.75*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ffff00';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.75*Math.PI,1.25*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ff1a1a';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.25*Math.PI,1.75*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#adff2f';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.75*Math.PI,0.25*Math.PI);
+            ctx.fill();
+        }else if(jiaodu > 180 && jiaodu < 225){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.fillStyle = '#5cb85c';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.25*Math.PI,0.5*Math.PI);
+            ctx.fill();
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = '#f0ad4e';
+            ctx.shadowBlur=5;
+            ctx.shadowOffsetX=-2;
+            ctx.shadowOffsetY=5;
+            ctx.shadowColor="black";
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,55,0.5*Math.PI,0.75*Math.PI);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ffff00';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.75*Math.PI,1.25*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ff1a1a';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.25*Math.PI,1.75*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#adff2f';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.75*Math.PI,0.25*Math.PI);
+            ctx.fill();
+        }else if(jiaodu > 225 && jiaodu < 315){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.fillStyle = '#5cb85c';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.25*Math.PI,0.5*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#f0ad4e';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,0.5*Math.PI,0.75*Math.PI);
+            ctx.fill();
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = '#ffff00';
+            ctx.shadowBlur=5;
+            ctx.shadowOffsetX=-5;
+            ctx.shadowColor="black";
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,55,0.75*Math.PI,1.25*Math.PI);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ff1a1a';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.25*Math.PI,1.75*Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#adff2f';
+            ctx.moveTo(x,y);
+            ctx.arc(x,y,50,1.75*Math.PI,0.25*Math.PI);
+            ctx.fill();
+        }
+
+    }
+
+    function getAngle(px,py,mx,my){//获得人物中心和鼠标坐标连线，与y轴正半轴之间的夹角
+        var x = Math.abs(px-mx);
+        var y = Math.abs(py-my);
+        var z = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+        var cos = y/z;
+        var radina = Math.acos(cos);//用反三角函数求弧度
+        var angle = Math.floor(180/(Math.PI/radina));//将弧度转换成角度
+
+        if(mx>px&&my>py){//鼠标在第四象限
+            angle = 180 - angle;
+        }
+
+        if(mx==px&&my>py){//鼠标在y轴负方向上
+            angle = 180;
+        }
+
+        if(mx>px&&my==py){//鼠标在x轴正方向上
+            angle = 90;
+        }
+
+        if(mx<px&&my>py){//鼠标在第三象限
+            angle = 180+angle;
+        }
+
+        if(mx<px&&my==py){//鼠标在x轴负方向
+            angle = 270;
+        }
+
+        if(mx<px&&my<py){//鼠标在第二象限
+            angle = 360 - angle;
+        }
+
+
+
+        return angle;
+    }
+</script>
+</body>
+</html>

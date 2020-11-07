@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <style>
+        #times{
+            width: 200px;
+            height: 20px;
+            border: 3px solid gray;  /*如果不加实线无法显示边框*/
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">木叶教办</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" th:each="cookie :${#httpServletRequest.getCookies()}"
+                                  th:if="${cookie.getName().equals('name')}"
+                                  th:text="${cookie.getValue()}+'，您好'"></a>
+                        </li>
+                        <li>
+                            <a href="/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;登出</a>
+                        </li>
+                        <li>
+                            <a href="/changePwd">修改密码</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <div class="panel-group" id="panel-594187">
+                        <div class="panel panel-default" th:each="m : ${menu}">
+                            <div class="panel-heading">
+                                <a th:text="${m.title}" class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-826081'+${m.id}">用 户 管 理</a>
+                            </div>
+                            <div th:id="'panel-element-826081'+${m.id}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 column">
+                    <!--<h3>欢迎使用木叶教办后台！</h3>-->
+                    <!--<img src="./imgs/wellcome.jpeg">-->
+                    <div>
+                        <button class="btn btn-primary" type="button" th:onclick="'startTraining()'">开始训练</button>
+                        <input type="text" id="radius">
+                        <span id="times"></span>
+                    </div>
+                    <!--<button class="btn btn-primary" type="button" th:onclick="'startTraining('+${a.id}+')'">开始训练</button>-->
+
+
+                    <div id="homewokrContainer" th:style="'height:800px;border: 1px solid black;'" >
+                        <!--<canvas id="myCanvas" th:style="'width:600px;height:800px'" style="border:1px solid #c3c3c3;">-->
+                            <!--您的浏览器不支持 HTML5 canvas 标签。-->
+                        <!--</canvas>-->
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script>
+    var x,y,ctx,canvas,body,radius,count,second,start,end,interval;
+
+    function startTraining() {
+//        radius = $("#radius").val();
+        window.clearInterval(interval);
+        count = 0;second = 0;start = Date.now();
+        if($("#radius").val() > 1 && $("#radius").val() < 400){
+            radius = parseInt($("#radius").val());
+        }else {
+            radius = 10;
+        }
+//        alert(radius);
+        $("#homewokrContainer").html('');
+
+        canvas = document.createElement('canvas');
+        canvas.style.left = 0;
+        canvas.style.top = 0;
+        canvas.width = $("#homewokrContainer").width();
+        canvas.height = $("#homewokrContainer").height();
+
+        body = document.getElementById("homewokrContainer");
+        body.appendChild(canvas);
+
+        ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#00cc00";
+        ctx.beginPath();
+        x = Math.floor(Math.random()*(canvas.width-radius*2)+1)+radius;
+        y = Math.floor(Math.random()*(canvas.height-radius*2)+1)+radius;
+        ctx.arc(x,y,radius,0,2*Math.PI);
+        ctx.fill();
+
+//        canvas.addEventListener('click', qwer);
+        canvas.addEventListener('click', function(e){
+
+            var ev = e || window.event;//兼容性处理
+
+            var canvasResult = windowToCanvas(canvas, ev.clientX, ev.clientY);//调用函数, ev.clientX是相对于浏览器窗口左上角的x坐标,ev.clientY是相对于浏览器窗口左上角的y坐标
+
+            if(Math.pow(Math.pow(x-canvasResult.x, 2)+Math.pow(y-canvasResult.y, 2),0.5) > radius){
+//                alert('no');
+            }else{
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                x = Math.floor(Math.random()*(canvas.width-radius*2)+1)+radius;
+                y = Math.floor(Math.random()*(canvas.height-radius*2)+1)+radius;
+                ctx.arc(x,y,radius,0,2*Math.PI);
+                ctx.fill();
+//                alert('yes');
+                if(count < 10){
+                    count++
+                }else{
+                    end = Date.now();
+                    alert('用时:'+(end-start)+'毫秒');
+
+                    window.clearInterval(interval);
+                    count = 0;second = 0;
+                    $("#homewokrContainer").html('');
+                    //todo 调用记录方法
+                }
+            }
+        }, false);
+
+        //使用定时器每秒向div写入当前时间
+        interval = setInterval('getDate()',1000);
+
+    }
+    function windowToCanvas(canvas, x, y) {
+        var canvasBox = canvas.getBoundingClientRect();
+        var canvasX = Math.abs(x - canvasBox.left);
+        var canvasY = Math.abs(y - canvasBox.top);
+        return {x: canvasX, y: canvasY};
+    }
+    //得到时间并写入div
+    function getDate(){
+//             //获取当前时间
+//             var date = new Date();
+//             //格式化为本地时间格式
+//             var date1 = date.toLocaleString();
+//             //获取div
+        var div1 = document.getElementById("times");
+        //将时间写入div
+        second++;
+        div1.innerHTML = second + '秒';
+    }
+
+</script>
+
+
+</body>
+</html>

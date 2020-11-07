@@ -1,0 +1,60 @@
+server:
+  port: 8090
+#  servlet:
+#      context-path: /teach
+spring:
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:mysql://localhost:3306/teacheasy?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&tinyInt1isBit=false&useOldAliasMetadataBehavior=true&testOnBorrow=true
+    username: root
+    password: root
+    defaultAutoCommit: false
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    database: 1
+    host: localhost
+    port: 6379
+    jedis:
+      pool:
+        max-active: 1024
+        max-idle: 200
+        max-wait: 1000s
+        min-idle: 50
+    timeout: 36000000
+
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    check-template-location: true
+    suffix: .html
+    encoding: UTF-8
+    mode: LEGACYHTML5
+  devtools:
+    restart:
+      enabled: true
+management:
+  security:
+    enabled: false
+
+mybatis:
+    configuration:
+      map-underscore-to-camel-case: true
+
+
+qiniu:
+  access:
+    key: 2WZHHqEzk43JHmzG1h9hfy_w3VrsFUj3jlsQg1ir
+  secret:
+    key: X6JMzKbixtyE8Flyp8OdfDCswLTeLSFJS7LUM7rN
+  bucket: artention
+  domain: artention-cdn.dankal.cn
+
+msg:
+  accessKey: LTAIVKm3hrTU3EMP
+  secret: bm48IbxX5Ra7TLSh6eyt7PdPctA2hk
+  signName: 剧集地
+  registTemp: SMS_172206861
+  changeTemp: SMS_174989481

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <style>
+        .noPaddingLeft{
+            padding-left: 0px;
+        }
+        .modal-header{
+            border-bottom: 0px;
+        }
+        .modal-footer{
+            border-top: 0px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">木叶教办</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" th:each="cookie :${#httpServletRequest.getCookies()}"
+                               th:if="${cookie.getName().equals('name')}"
+                               th:text="${cookie.getValue()}+'，您好'"></a>
+                        </li>
+                        <li>
+                            <a href="/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;登出</a>
+                        </li>
+                        <li>
+                            <a href="/changePwd">修改密码</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <div class="panel-group" id="panel-594187">
+                        <div class="panel panel-default" th:each="m : ${menu}">
+                            <div class="panel-heading" th:if="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-826081'+${m.id}">用 户 管 理</a>
+                            </div>
+                            <div  th:if="${m.title} ne ${pageTitle}" th:id="'panel-element-826081'+${m.id}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+
+                            <div class="panel-heading" th:unless="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-792346'+${m.id}" aria-expanded="true">权 限 管 理</a>
+                            </div>
+                            <div th:unless="${m.title} ne ${pageTitle}" th:id="'panel-element-792346'+${m.id}" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 column">
+                    <ul class="breadcrumb">
+                        <li>
+                            作业管理
+                        </li>
+                        <li class="active">
+                            作业列表
+                        </li>
+                        <!--<li class="active">-->
+                        <!--Data-->
+                        <!--</li>-->
+                    </ul>
+
+                    <!--<div class="row clearfix">-->
+
+                        <!--<div class="col-md-12 column" style="margin-bottom: 20px;">-->
+                            <!--<div class="col-sm-2 noPaddingLeft">-->
+                                <!--<select id="filmTypeId" name="select" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">-->
+                                    <!--　　<option value="">影视剧类型</option>-->
+                                    <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 1}" th:selected="${c.id == stageRequestVo.filmTypeId}?true:false">0</option>-->
+                                    <!--&lt;!&ndash;　　<option value="1">1</option>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;　　<option value="2">2</option>&ndash;&gt;-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="col-sm-2 noPaddingLeft">-->
+                                <!--<select id="stageStyleId" name="select" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">-->
+                                    <!--　　<option value="">场景风格</option>-->
+                                    <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 2}" th:selected="${c.id == stageRequestVo.stageStyleId}?true:false">0</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="col-sm-4 column"></div>-->
+                            <!--<div class="col-md-2 column"></div>-->
+                            <!--<div class="col-md-2 column">-->
+                                <!--<button type="button" class="btn btn-primary" onclick="newStage();">新增场景</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+
+                    <div class="row clearfix">
+
+                        <div class="col-md-12 column">
+
+                            <div class="col-md-10 column"></div>
+                            <div class="col-md-2 column">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearHomeworkMsg();">新增作业</button>
+                                <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearRotationPicMsg();">新增轮播图</button>-->
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix" style="height: 20px;"></div>
+
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th width="50px">
+                                    编号
+                                </th>
+                                <th width="120px">
+                                    班级
+                                </th>
+                                <th width="50px">
+                                    学科
+                                </th>
+                                <th width="100px">
+                                    作业本名称
+                                </th>
+                                <th width="200px">
+                                    作业内容
+                                </th>
+                                <th width="150px">
+                                    创建时间
+                                </th>
+                                <th width="70px">
+                                    状态
+                                </th>
+                                <th>
+                                    操作
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="a : ${homeworkList.list}">
+                                <td th:text="${a.id}">
+                                    1
+                                </td>
+                                <td th:text="${a.grade != ''?a.grade+(a.classes != ''?'（'+a.classes+'）班':''):'暂无数据'}">
+                                    15060606060
+                                </td>
+                                <td th:text="${a.subject_name != ''?a.subject_name:'暂无数据'}">
+                                    15060606060
+                                </td>
+                                <td th:text="${a.name != ''?a.name:'暂无数据'}">
+                                    15060606060
+                                </td>
+                                <td th:text="${a.content != ''?a.content:'暂无数据'}">
+                                    15060606060
+                                </td>
+                                <td th:text="${#dates.format(a.create_time, 'yyyy-MM-dd HH:mm')}">
+                                    15060606060
+                                </td>
+                                <td th:text="${a.homework_status == 1?'进行中':(a.homework_status == 2?'登记中':'已完成')}">
+                                    15060606060
+                                </td>
+                                <td>
+                                    <!--<button class="btn btn-primary" type="button" th:if="${a.homework_status == 0}" th:onclick="'recommendStage('+${a.id}+')'">推荐</button>-->
+                                    <!--<button class="btn btn-primary" type="button" th:unless="${a.rStatus == 0}" th:onclick="'cancelRecommendStage('+${a.id}+')'">取消推荐</button>-->
+                                    <button class="btn btn-primary" type="button" th:onclick="'registerHomework('+${a.id}+')'">登记</button>
+                                    <button class="btn btn-primary" type="button" th:onclick="'deleteHomework('+${a.id}+')'">删除</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row clearfix">
+                        <input type="hidden" id="pageNum" th:value="${homeworkList.pageNum}"/>
+                        <input type="hidden" id="pageSize" th:value="${homeworkList.pageSize}"/>
+                        <input type="hidden" id="pages" th:value="${homeworkList.pages}"/>
+                        <div class="col-md-4 column">
+                            <span style="height: inherit;">共   <span th:text="${homeworkList.total}">5</span>    条记录</span>
+                        </div>
+                        <div class="col-md-8 column" th:if="${homeworkList.total > 0}">
+                            <ul class="pagination" style="margin: 0 0;">
+                                <th:block th:if="${homeworkList.pageNum > 1}">
+                                    <li>
+                                        <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum='+${homeworkList.pageNum-1}+${params}">上一页</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${homeworkList.pages < 9}">
+                                    <li th:each="dayCyc : ${#numbers.sequence(1,homeworkList.pages)}" th:class="${dayCyc == homeworkList.pageNum}? 'active' : ''">
+                                        <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum='+${dayCyc}+${params}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${homeworkList.pages >= 9}">
+                                    <li th:if="${homeworkList.pageNum >= 4}" th:class="${1 == homeworkList.pageNum}? 'active' : ''">
+                                        <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum=1'">1</a>
+                                    </li>
+                                    <li th:if="${homeworkList.pageNum <= 3}" th:each="dayCyc : ${#numbers.sequence(1,5)}" th:class="${dayCyc == homeworkList.pageNum}? 'active' : ''">
+                                        <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum='+${dayCyc}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${homeworkList.pageNum >= 5}">
+                                        <span>...</span>
+                                    </li>
+                                    <th:block th:if="${homeworkList.pageNum >= 4 and homeworkList.pageNum <= homeworkList.pages-3}">
+                                        <li th:each="dd : ${#numbers.sequence(-2,2)}" th:class="${homeworkList.pageNum+dd == homeworkList.pageNum}? 'active' : ''">
+                                            <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum='+${homeworkList.pageNum+dd}" th:text="${homeworkList.pageNum+dd}">1</a>
+                                        </li>
+                                    </th:block>
+                                    <li th:if="${homeworkList.pageNum <= homeworkList.pages - 4}">
+                                        <span>...</span>
+                                    </li>
+                                    <li th:if="${homeworkList.pageNum >= homeworkList.pages - 2}" th:each="dayCyc : ${#numbers.sequence(-4,0)}" th:class="${homeworkList.pages + dayCyc == homeworkList.pageNum}? 'active' : ''">
+                                        <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum='+${homeworkList.pages + dayCyc}" th:text="${homeworkList.pages + dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${homeworkList.pageNum <= homeworkList.pages - 3}" th:class="${homeworkList.pages == homeworkList.pageNum}? 'active' : ''">
+                                        <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum='+${homeworkList.pages}" th:text="${homeworkList.pages}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${homeworkList.pageNum < homeworkList.pages}">
+                                    <li>
+                                        <a th:href="'getHomeworkList?pageSize='+${homeworkList.pageSize}+'&pageNum='+${homeworkList.pageNum+1}">下一页</a>
+                                    </li>
+                                </th:block>
+                                <li>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" th:text="${homeworkList.pageSize}+'条/页'">10条/页
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a th:href="'getHomeworkList?pageSize=10'">10条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getHomeworkList?pageSize=20'">20条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getHomeworkList?pageSize=30'">30条/页</a>
+                                            </li>
+                                            <!--<li class="divider"></li>-->
+                                            <li>
+                                                <a th:href="'getHomeworkList?pageSize=40'">40条/页</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    跳至<input id="jumpPage" type="text" class="form-control" style="width: 50px;display: inline-block;"/>页
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--模态框（Modal） -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">新增作业</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal"  id="homeworkForm" enctype="multipart/form-data">
+
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">*年级：</label>
+                                        <div class="col-sm-3">
+                                            <select id="grade" name="grade" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">
+                                                <option value="">年级</option>
+                                                　　<option th:each="c : ${gradeList}" th:value="${c.id}" th:text="${c.grade}" >0</option>
+                                                <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 4}">0</option>-->
+                                            </select>
+                                        </div>
+
+                                        <div id="classesDiv" class="col-sm-3 noPaddingLeft" style="display: none;">
+                                            <select id="classes" name="classes" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true"></select>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">*学科：</label>
+                                        <div class="col-sm-3">
+                                            <select id="subject" name="subject" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">
+                                                <option value="">学科</option>
+                                                　　<option th:each="c : ${subjectList}" th:value="${c.id}" th:text="${c.subjectName}" >0</option>
+                                                <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 4}">0</option>-->
+                                            </select>
+                                        </div>
+
+                                        <div id="workBookDiv" class="col-sm-3 noPaddingLeft" style="display: none;">
+                                            <select id="workBook" name="workBook" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true"></select>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="content" class="col-sm-3 control-label">*作业内容：</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" name="content" id="content" placeholder="">
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="closeAddAdmin">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="insertHomework();">确定</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/jquery/jquery.validate.min.js}"></script>
+<style>
+    .error{
+        color:red;
+    }
+</style>
+<script>
+    $().ready(function() {
+        $("#homeworkForm").validate({
+            rules: {
+                grade: {
+                    required:true
+                },
+                classes: {
+                    required:true
+                },
+                subject:{
+                    required:true
+                },
+                workBook:{
+                    required:true
+                },
+                content:{
+                    required:true
+                }
+            },
+            messages: {
+                grade: {
+                    required:"年级不能为空"
+                },
+                classes: {
+                    required:"班级不能为空"
+                },
+                subject: {
+                    required:"科目不能为空"
+                },
+                workBook: {
+                    required:"作业本不能为空"
+                },
+                content: {
+                    required:"作业内容不能为空"
+                }
+            }
+        });
+        jQuery.validator.addMethod("english", function(value, element) {
+            var chrnum = /^([0-9a-zA-Z\s\.\,]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入英文");
+        jQuery.validator.addMethod("chinese", function(value, element) {
+            var chrnum = /^([0-9\u4E00-\u9FA5\，\。\？\！\；\：\“\”\《\》]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入中文");
+    });
+    function newStage() {
+        window.location.href = 'newStage';
+    }
+    function clearHomeworkMsg() {
+//        $("#myModalLabel").text("新增轮播图");
+        $("#grade").val("");
+        $("#classes").val("");
+        $("#subject").val("");
+        $("#workBook").val("");
+        $("#content").val("");
+        $("#classesDiv").hide();
+        $("#workBookDiv").hide();
+//        $("#showPic").html("");
+//        var str = "<option value=''>选择身份</option>";
+    }
+    $("#grade").change(function(){
+        var opt=$("#grade").val();
+        $.ajax({
+            url: "/gradeClass/getGradeClassListByGradeId",
+            method: "get",
+            data: {
+                gradeId:opt
+            },
+            success: function(result){
+                if(result.status == 1){
+                    var str = "<option value=''>班级</option>";
+                    var msg = result.data;
+                    for(var i=0;i<msg.length;i++){
+                        str += "<option value='"+msg[i].id+"'>"+msg[i].classes+"</option>";
+                    }
+                    $("#classes").html(str);
+                    $("#classesDiv").show();
+                }else{
+                    $("#classes").html("");
+                    $("#classesDiv").hide();
+                }
+                $("#workBook").html("");
+                $("#workBookDiv").hide();
+            }
+        });
+    });
+    $("#classes").change(function(){
+        $("#workBook").html("");
+        $("#workBookDiv").hide();
+    });
+    $("#subject").click(function(){
+        var opt=$("#subject").val();
+        var opt2=$("#classes").val();
+        $.ajax({
+            url: "/workBook/getWorkBookListBySubjectId",
+            method: "get",
+            data: {
+                subjectId:opt,
+                classesId:opt2
+            },
+            success: function(result){
+                if(result.status == 1){
+                    var str = "<option value=''>作业本</option>";
+                    var msg = result.data;
+                    for(var i=0;i<msg.length;i++){
+                        str += "<option value='"+msg[i].id+"'>"+msg[i].name+"</option>";
+                    }
+                    $("#workBook").html(str);
+                    $("#workBookDiv").show();
+                }else{
+                    $("#workBook").html("");
+                    $("#workBookDiv").hide();
+                }
+            }
+        });
+    });
+
+//    $(document).keydown(function(event){
+//        if(event.keyCode == 13){
+//            if(isNumber($("#jumpPage").val())){//非数字不能跳转
+//                window.location.href = 'getHomeworkList?idOrName='+$("#idOrName").val()+'&pageSize='+$("#pageSize").val()+'&pageNum='+$("#jumpPage").val();
+//            }
+//        }
+//    });
+
+    function recommendStage(id) {
+        $("#stageId").val(id);
+    }
+    function cancelRecommendStage(id) {
+        $("#cancelStageId").val(id);
+    }
+    function stopRecommendStage(id) {
+        $("#stopStageId").val(id);
+    }
+    function insertHomework(){
+        if(!$("#homeworkForm").validate().form()) {
+            return false;
+        }
+        if($("#classes").val() == null){
+            alert('请选择一个有班级的年级!');
+            return false;
+        }
+        if($("#workBook").val() == null){
+            alert('请选择一个有作业本的科目!');
+            return false;
+        }
+        $.ajax({
+            url: "/homework/insertHomework",
+            method: "post",
+            data: {
+                gradeClassesId:$("#classes").val(),
+                subjectId:$("#subject").val(),
+                workBookId:$("#workBook").val(),
+                content:$("#content").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getHomeworkList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+
+    function registerHomework(id) {
+        window.location.href = 'registerHomework?homeworkId='+id;
+    }
+    function deleteHomework(id) {
+        var result = confirm("删除作业将会同步删除该作业的作业评价，确认删除该作业?");
+        if(result){
+            $.ajax({
+                url: "/homework/deleteHomework",
+                method: "get",
+                data:{
+                    homeworkId:id
+                },
+                success: function(result){
+                    if(result.status == 1){
+                        alert(result.message);
+                        window.location.href = 'getHomeworkList';
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+    }
+    function enddingHomePageStageRecommend(){
+
+        $.ajax({
+            url: "/stage/stopStageById",
+            method: "post",
+            data: {
+                stageId:$("#stopStageId").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getHomeworkList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+    function cancelHomePageStageRecommend() {
+        $.ajax({
+            url: "/stage/cancelRecommendStageToHomePage",
+            method: "post",
+            data: {
+                stageId:$("#cancelStageId").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getHomeworkList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+    //判断是否为数字方法
+    function isNumber(val){
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        if(regPos.test(val) || regNeg.test(val)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function getSubjectList() {
+        var url = 'getSubjectList?pageSize='+$("#pageSize").val()+'&idOrName='+$("#idOrName").val().trim()+'&processStatus='+$("#processStatus").val();
+        if($("#country").val() != '' && $("#country").val() != null){
+            url += '&country='+$("#country").val();
+        }
+        if($("#province").val() != '' && $("#province").val() != null){
+            url += '&province='+$("#province").val();
+        }
+        if($("#city").val() != '' && $("#city").val() != null){
+            url += '&city='+$("#city").val();
+        }
+        if($("#filmTypeId").val() != '' && $("#filmTypeId").val() != null){
+            url += '&filmTypeId='+$("#filmTypeId").val();
+        }
+        if($("#stageMainTypeId").val() != '' && $("#stageMainTypeId").val() != null){
+            url += '&stageMainTypeId='+$("#stageMainTypeId").val();
+        }
+        if($("#stageSubTypeId").val() != '' && $("#stageSubTypeId").val() != null){
+            url += '&stageSubTypeId='+$("#stageSubTypeId").val();
+        }
+        if($("#stageStyleId").val() != '' && $("#stageStyleId").val() != null){
+            url += '&stageStyleId='+$("#stageStyleId").val();
+        }
+        window.location.href = url;
+    }
+    function getStageDetail(id) {
+        window.location.href = 'getStageDetail?id='+id;
+    }
+    function updateStage(id) {
+        window.location.href = 'updateStage?stageId='+id;
+    }
+</script>
+</body>
+</html>

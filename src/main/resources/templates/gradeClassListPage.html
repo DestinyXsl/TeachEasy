@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <style>
+        .noPaddingLeft{
+            padding-left: 0px;
+        }
+        .modal-header{
+            border-bottom: 0px;
+        }
+        .modal-footer{
+            border-top: 0px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">木叶教办</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" th:each="cookie :${#httpServletRequest.getCookies()}"
+                               th:if="${cookie.getName().equals('name')}"
+                               th:text="${cookie.getValue()}+'，您好'"></a>
+                        </li>
+                        <li>
+                            <a href="/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;登出</a>
+                        </li>
+                        <li>
+                            <a href="/changePwd">修改密码</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <div class="panel-group" id="panel-594187">
+                        <div class="panel panel-default" th:each="m : ${menu}">
+                            <div class="panel-heading" th:if="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-826081'+${m.id}">用 户 管 理</a>
+                            </div>
+                            <div  th:if="${m.title} ne ${pageTitle}" th:id="'panel-element-826081'+${m.id}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+
+                            <div class="panel-heading" th:unless="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-792346'+${m.id}" aria-expanded="true">权 限 管 理</a>
+                            </div>
+                            <div th:unless="${m.title} ne ${pageTitle}" th:id="'panel-element-792346'+${m.id}" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 column">
+                    <ul class="breadcrumb">
+                        <li>
+                            年级管理
+                        </li>
+                        <li class="active">
+                            班级列表
+                        </li>
+                        <!--<li class="active">-->
+                        <!--Data-->
+                        <!--</li>-->
+                    </ul>
+
+                    <!--<div class="row clearfix">-->
+
+                        <!--<div class="col-md-12 column" style="margin-bottom: 20px;">-->
+                            <!--<div class="col-sm-2 noPaddingLeft">-->
+                                <!--<select id="filmTypeId" name="select" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">-->
+                                    <!--　　<option value="">影视剧类型</option>-->
+                                    <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 1}" th:selected="${c.id == stageRequestVo.filmTypeId}?true:false">0</option>-->
+                                    <!--&lt;!&ndash;　　<option value="1">1</option>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;　　<option value="2">2</option>&ndash;&gt;-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="col-sm-2 noPaddingLeft">-->
+                                <!--<select id="stageStyleId" name="select" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">-->
+                                    <!--　　<option value="">场景风格</option>-->
+                                    <!--　　<option th:each="c : ${category1stList}" th:value="${c.id}" th:text="${c.name}" th:if="${c.type == 2}" th:selected="${c.id == stageRequestVo.stageStyleId}?true:false">0</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                            <!--<div class="col-sm-4 column"></div>-->
+                            <!--<div class="col-md-2 column"></div>-->
+                            <!--<div class="col-md-2 column">-->
+                                <!--<button type="button" class="btn btn-primary" onclick="newStage();">新增场景</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+
+                    <div class="row clearfix">
+
+                        <div class="col-md-12 column">
+
+                            <div class="col-sm-2 noPaddingLeft">
+                                <select id="gradeParam" name="select" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">
+                                    　　<option value="">年级</option>
+                                    　　<option th:each="c : ${gradeList}" th:value="${c.id}" th:text="${c.grade}" th:selected="${c.id == gradeId}?true:false">0</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-8 column"></div>
+                            <div class="col-md-2 column">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearGradeClassesMsg();">新增班级</button>
+                                <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearRotationPicMsg();">新增轮播图</button>-->
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix" style="height: 20px;"></div>
+
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th width="150px">
+                                    编号
+                                </th>
+                                <th width="150px">
+                                    级
+                                </th>
+                                <th width="150px">
+                                    班
+                                </th>
+                                <th width="150px">
+                                    创建时间
+                                </th>
+                                <th>
+                                    操作
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="a : ${gradeClassesList.list}">
+                                <td th:text="${a.id}">
+                                    1
+                                </td>
+                                <td th:text="${a.grade != ''?a.grade:'暂无数据'}">
+                                    15060606060
+                                </td>
+                                <td th:text="${a.classes != ''?'（'+a.classes+'）班':'暂无数据'}">
+                                    15060606060
+                                </td>
+                                <td th:text="${a.create_time != ''?#dates.format(a.create_time, 'yyyy-MM-dd HH:mm:ss'):'暂无数据'}">
+                                    15060606060
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary" type="button" th:onclick="'deleteGradeClasses('+${a.id}+')'">删除</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row clearfix">
+                        <input type="hidden" id="pageNum" th:value="${gradeClassesList.pageNum}"/>
+                        <input type="hidden" id="pageSize" th:value="${gradeClassesList.pageSize}"/>
+                        <input type="hidden" id="pages" th:value="${gradeClassesList.pages}"/>
+                        <div class="col-md-4 column">
+                            <span style="height: inherit;">共   <span th:text="${gradeClassesList.total}">5</span>    条记录</span>
+                        </div>
+                        <div class="col-md-8 column" th:if="${gradeClassesList.total > 0}">
+                            <ul class="pagination" style="margin: 0 0;">
+                                <th:block th:if="${gradeClassesList.pageNum > 1}">
+                                    <li>
+                                        <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum='+${gradeClassesList.pageNum-1}+${params}">上一页</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${gradeClassesList.pages < 9}">
+                                    <li th:each="dayCyc : ${#numbers.sequence(1,gradeClassesList.pages)}" th:class="${dayCyc == gradeClassesList.pageNum}? 'active' : ''">
+                                        <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum='+${dayCyc}+${params}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${gradeClassesList.pages >= 9}">
+                                    <li th:if="${gradeClassesList.pageNum >= 4}" th:class="${1 == gradeClassesList.pageNum}? 'active' : ''">
+                                        <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum=1'">1</a>
+                                    </li>
+                                    <li th:if="${gradeClassesList.pageNum <= 3}" th:each="dayCyc : ${#numbers.sequence(1,5)}" th:class="${dayCyc == gradeClassesList.pageNum}? 'active' : ''">
+                                        <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum='+${dayCyc}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${gradeClassesList.pageNum >= 5}">
+                                        <span>...</span>
+                                    </li>
+                                    <th:block th:if="${gradeClassesList.pageNum >= 4 and gradeClassesList.pageNum <= gradeClassesList.pages-3}">
+                                        <li th:each="dd : ${#numbers.sequence(-2,2)}" th:class="${gradeClassesList.pageNum+dd == gradeClassesList.pageNum}? 'active' : ''">
+                                            <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum='+${gradeClassesList.pageNum+dd}" th:text="${gradeClassesList.pageNum+dd}">1</a>
+                                        </li>
+                                    </th:block>
+                                    <li th:if="${gradeClassesList.pageNum <= gradeClassesList.pages - 4}">
+                                        <span>...</span>
+                                    </li>
+                                    <li th:if="${gradeClassesList.pageNum >= gradeClassesList.pages - 2}" th:each="dayCyc : ${#numbers.sequence(-4,0)}" th:class="${gradeClassesList.pages + dayCyc == gradeClassesList.pageNum}? 'active' : ''">
+                                        <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum='+${gradeClassesList.pages + dayCyc}" th:text="${gradeClassesList.pages + dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${gradeClassesList.pageNum <= gradeClassesList.pages - 3}" th:class="${gradeClassesList.pages == gradeClassesList.pageNum}? 'active' : ''">
+                                        <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum='+${gradeClassesList.pages}" th:text="${gradeClassesList.pages}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${gradeClassesList.pageNum < gradeClassesList.pages}">
+                                    <li>
+                                        <a th:href="'getGradeClassList?pageSize='+${gradeClassesList.pageSize}+'&pageNum='+${gradeClassesList.pageNum+1}">下一页</a>
+                                    </li>
+                                </th:block>
+                                <li>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" th:text="${gradeClassesList.pageSize}+'条/页'">10条/页
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a th:href="'getGradeClassList?pageSize=10'">10条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getGradeClassList?pageSize=20'">20条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getGradeClassList?pageSize=30'">30条/页</a>
+                                            </li>
+                                            <!--<li class="divider"></li>-->
+                                            <li>
+                                                <a th:href="'getGradeClassList?pageSize=40'">40条/页</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    跳至<input id="jumpPage" type="text" class="form-control" style="width: 50px;display: inline-block;"/>页
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--模态框（Modal） -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">新增班级</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal"  id="gradeClassesForm" enctype="multipart/form-data">
+                                    <input type="hidden" id="rotationPicId"/>
+                                    <input type="hidden" id="picUrl"/>
+
+                                    <div class="form-group">
+                                        <label for="gradeId" class="col-sm-4 control-label">*年级：</label>
+                                        <div class="col-sm-8">
+                                            <select id="gradeId" name="gradeId" class="selectpicker show-tick form-control" data-live-search="true" data-actions-box="true">
+                                                　　<option value="">年级</option>
+                                                　　<option th:each="c : ${gradeList}" th:value="${c.id}" th:text="${c.grade}">0</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="classes" class="col-sm-4 control-label">*班级：</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" name="classes" id="classes" placeholder="">
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="closeAddAdmin">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="insertGradeClasses();">确定</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/jquery/jquery.validate.min.js}"></script>
+<style>
+    .error{
+        color:red;
+    }
+</style>
+<script>
+    $().ready(function() {
+        $("#gradeClassesForm").validate({
+            rules: {
+                gradeId: {
+                    required:true
+                },
+                classes: {
+                    required:true
+                }
+            },
+            messages: {
+                gradeId: {
+                    required:"年级不能为空"
+                },
+                classes: {
+                    required:"班级不能为空"
+                }
+            }
+        });
+        jQuery.validator.addMethod("english", function(value, element) {
+            var chrnum = /^([0-9a-zA-Z\s\.\,]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入英文");
+        jQuery.validator.addMethod("chinese", function(value, element) {
+            var chrnum = /^([0-9\u4E00-\u9FA5\，\。\？\！\；\：\“\”\《\》]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入中文");
+    });
+
+    function clearGradeClassesMsg() {
+//        $("#myModalLabel").text("新增轮播图");
+        $("#gradeId").val("");
+        $("#classes").val("");
+//        $("#requestUrl").val("");
+//        $("#order").val("");
+//        $("#picUrl").val("");
+//        $("#showPic").html("");
+//        var str = "<option value=''>选择身份</option>";
+    }
+    $("#gradeParam").change(function(){
+        var opt=$("#gradeParam").val();
+        window.location.href = 'getGradeClassList?gradeId='+opt;
+    });
+
+
+//    $(document).keydown(function(event){
+//        if(event.keyCode == 13){
+//            if(isNumber($("#jumpPage").val())){//非数字不能跳转
+//                window.location.href = 'getGradeClassList?idOrName='+$("#idOrName").val()+'&pageSize='+$("#pageSize").val()+'&pageNum='+$("#jumpPage").val();
+//            }
+//        }
+//    });
+
+    function recommendStage(id) {
+        $("#stageId").val(id);
+    }
+    function cancelRecommendStage(id) {
+        $("#cancelStageId").val(id);
+    }
+    function stopRecommendStage(id) {
+        $("#stopStageId").val(id);
+    }
+    function insertGradeClasses(){
+        if(!$("#gradeClassesForm").validate().form()) {
+            return false;
+        }
+        $.ajax({
+            url: "/gradeClass/insertGradeClasses",
+            method: "post",
+            data: {
+                gradeId:$("#gradeId").val(),
+                classes:$("#classes").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getGradeClassList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+
+    function deleteGradeClasses(id) {
+        var result = confirm("确认删除班级?");
+        if(result){
+            $.ajax({
+                url: "/gradeClass/deleteGradeClasses",
+                method: "get",
+                data:{
+                    gradeClassesId:id
+                },
+                success: function(result){
+                    if(result.status == 1){
+                        alert(result.message);
+                        window.location.href = 'getGradeClassList';
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+    }
+    function enddingHomePageStageRecommend(){
+
+        $.ajax({
+            url: "/stage/stopStageById",
+            method: "post",
+            data: {
+                stageId:$("#stopStageId").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getStageList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+    function cancelHomePageStageRecommend() {
+        $.ajax({
+            url: "/stage/cancelRecommendStageToHomePage",
+            method: "post",
+            data: {
+                stageId:$("#cancelStageId").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getStageList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+    //判断是否为数字方法
+    function isNumber(val){
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        if(regPos.test(val) || regNeg.test(val)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function getGradeClassList() {
+        var url = 'getGradeClassList?pageSize='+$("#pageSize").val()+'&idOrName='+$("#idOrName").val().trim()+'&processStatus='+$("#processStatus").val();
+        if($("#country").val() != '' && $("#country").val() != null){
+            url += '&country='+$("#country").val();
+        }
+        if($("#province").val() != '' && $("#province").val() != null){
+            url += '&province='+$("#province").val();
+        }
+        if($("#city").val() != '' && $("#city").val() != null){
+            url += '&city='+$("#city").val();
+        }
+        if($("#filmTypeId").val() != '' && $("#filmTypeId").val() != null){
+            url += '&filmTypeId='+$("#filmTypeId").val();
+        }
+        if($("#stageMainTypeId").val() != '' && $("#stageMainTypeId").val() != null){
+            url += '&stageMainTypeId='+$("#stageMainTypeId").val();
+        }
+        if($("#stageSubTypeId").val() != '' && $("#stageSubTypeId").val() != null){
+            url += '&stageSubTypeId='+$("#stageSubTypeId").val();
+        }
+        if($("#stageStyleId").val() != '' && $("#stageStyleId").val() != null){
+            url += '&stageStyleId='+$("#stageStyleId").val();
+        }
+        window.location.href = url;
+    }
+    function getStageDetail(id) {
+        window.location.href = 'getStageDetail?id='+id;
+    }
+    function updateStage(id) {
+        window.location.href = 'updateStage?stageId='+id;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <style>
+        .roleTreeShow{
+            display: inline-block;
+        }
+        .roleTreeHide{
+            display: none;
+        }
+        .ignore {
+            overflow: hidden; /*自动隐藏文字*/
+            text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+            white-space: nowrap;/*强制不换行*/
+            width: 20em;/*不允许出现半汉字截断*/
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/wellcome">注艺租赁管理后台</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" th:each="cookie :${#httpServletRequest.getCookies()}"
+                               th:if="${cookie.getName().equals('name')}"
+                               th:text="${cookie.getValue()}+'，您好'"></a>
+                        </li>
+                        <li>
+                            <a href="/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;登出</a>
+                        </li>
+                        <li>
+                            <a href="/changePwd">修改密码</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <div class="panel-group" id="panel-594187">
+                        <div class="panel panel-default" th:each="m : ${menu}">
+                            <div class="panel-heading" th:if="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-826081'+${m.id}">用 户 管 理</a>
+                            </div>
+                            <div  th:if="${m.title} ne ${pageTitle}" th:id="'panel-element-826081'+${m.id}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+
+                            <div class="panel-heading" th:unless="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-792346'+${m.id}" aria-expanded="true">权 限 管 理</a>
+                            </div>
+                            <div th:unless="${m.title} ne ${pageTitle}" th:id="'panel-element-792346'+${m.id}" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 column">
+                    <ul class="breadcrumb">
+                        <li>
+                            权限管理
+                        </li>
+                        <li class="active">
+                            身份列表
+                        </li>
+                        <!--<li class="active">-->
+                        <!--Data-->
+                        <!--</li>-->
+                    </ul>
+                    <div class="row clearfix">
+                        <div class="col-md-10 column">
+                            <!--<div class="col-sm-5">-->
+                                <!--<div class="input-group">-->
+                                    <!--<input id="accountOrName" type="text" class="form-control" placeholder="请输入管理员账号/姓名进行搜索" th:value="${accountOrName}">-->
+                                    <!--<span class="input-group-btn">-->
+                                        <!--<button class="btn btn-primary" type="button" onclick="getAdminList();"><span class="glyphicon glyphicon-search"></span></button>-->
+                                    <!--</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                        <div class="col-md-2 column">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="getModelList();">新增身份</button>
+                        </div>
+                    </div>
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    编号
+                                </th>
+                                <th>
+                                    管理员身份
+                                </th>
+                                <th>
+                                    管理模块
+                                </th>
+                                <th>
+                                    操作
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="a : ${roleList.list}">
+                                <td th:text="${a.id}">
+                                    1
+                                </td>
+                                <td th:text="${a.roleTitle}">
+                                    15060606060
+                                </td>
+                                <td>
+                                    <div th:text="${a.managerModel}" class="ignore"></div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary" type="button" th:onclick="'getRoleDetailForUpdate('+${a.id}+')'" data-toggle="modal" data-target="#myModal">编辑</button>
+                                    <button class="btn btn-primary" type="button"  th:onclick="'deleteRole('+${a.id}+')'">删除</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row clearfix">
+                        <input type="hidden" id="pageNum" th:value="${roleList.pageNum}"/>
+                        <input type="hidden" id="pageSize" th:value="${roleList.pageSize}"/>
+                        <input type="hidden" id="pages" th:value="${roleList.pages}"/>
+                        <div class="col-md-4 column">
+                            <span style="height: inherit;">共   <span th:text="${roleList.total}">5</span>    条记录</span>
+                        </div>
+                        <div class="col-md-8 column" th:if="${roleList.total > 0}">
+                            <ul class="pagination" style="margin: 0 0;">
+                                <th:block th:if="${roleList.pageNum > 1}">
+                                    <li>
+                                        <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum='+${roleList.pageNum-1}">上一页</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${roleList.pages < 9}">
+                                    <li th:each="dayCyc : ${#numbers.sequence(1,roleList.pages)}" th:class="${dayCyc == roleList.pageNum}? 'active' : ''">
+                                        <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum='+${dayCyc}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${roleList.pages >= 9}">
+                                    <li th:if="${roleList.pageNum >= 4}" th:class="${1 == roleList.pageNum}? 'active' : ''">
+                                        <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum=1">1</a>
+                                    </li>
+                                    <li th:if="${roleList.pageNum <= 3}" th:each="dayCyc : ${#numbers.sequence(1,5)}" th:class="${dayCyc == roleList.pageNum}? 'active' : ''">
+                                        <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum='+${dayCyc}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${roleList.pageNum >= 5}">
+                                        <span>...</span>
+                                    </li>
+                                    <th:block th:if="${roleList.pageNum >= 4 and roleList.pageNum <= roleList.pages-3}">
+                                        <li th:each="dd : ${#numbers.sequence(-2,2)}" th:class="${roleList.pageNum+dd == roleList.pageNum}? 'active' : ''">
+                                            <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum='+${roleList.pageNum+dd}" th:text="${roleList.pageNum+dd}">1</a>
+                                        </li>
+                                    </th:block>
+                                    <li th:if="${roleList.pageNum <= roleList.pages - 4}">
+                                        <span>...</span>
+                                    </li>
+                                    <li th:if="${roleList.pageNum >= roleList.pages - 2}" th:each="dayCyc : ${#numbers.sequence(-4,0)}" th:class="${roleList.pages + dayCyc == roleList.pageNum}? 'active' : ''">
+                                        <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum='+${roleList.pages + dayCyc}" th:text="${roleList.pages + dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${roleList.pageNum <= roleList.pages - 3}" th:class="${roleList.pages == roleList.pageNum}? 'active' : ''">
+                                        <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum='+${roleList.pages}" th:text="${roleList.pages}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${roleList.pageNum < roleList.pages}">
+                                    <li>
+                                        <a th:href="'getRoleList?pageSize='+${roleList.pageSize}+'&pageNum='+${roleList.pageNum+1}">下一页</a>
+                                    </li>
+                                </th:block>
+                                <li>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" th:text="${roleList.pageSize}+'条/页'">10条/页
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a th:href="'getRoleList?pageSize=10'">10条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getRoleList?pageSize=20'">20条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getRoleList?pageSize=30'">30条/页</a>
+                                            </li>
+                                            <!--<li class="divider"></li>-->
+                                            <li>
+                                                <a th:href="'getRoleList?pageSize=40'">40条/页</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    跳至<input id="jumpPage" type="text" class="form-control" style="width: 50px;display: inline-block;"/>页
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">新增身份</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal" id="form" action="createAndUpdateAdmin" method="post">
+                                    <input type="hidden" id="roleId"/>
+                                    <div class="form-group">
+                                        <label for="roleTitle" class="col-sm-3 control-label">*身份名称：</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" name="roleTitle" id="roleTitle" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">*管理模块：</label>
+                                        <div class="col-sm-9">
+                                            <ul class="list-unstyled" id="newRoleUl">
+                                                <!--<li>-->
+                                                    <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+                                                    <!--<input type="checkbox" name="userManager" title="sdd" value="1"/>-->
+                                                    <!--用户管理<br/>-->
+                                                    <!--<ul style="list-style:none;" class="roleTreeHide">-->
+                                                        <!--<li><input type="checkbox" name="userManager" title="sder" value="2"/>用户列表</li>-->
+                                                    <!--</ul>-->
+                                                <!--</li>-->
+                                                <!--<li>-->
+                                                    <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+                                                    <!--<input type="checkbox" name="userManager" title="sdsdaer" value="3"/>-->
+                                                    <!--场景管理<br/>-->
+                                                    <!--<ul style="list-style:none;" class="roleTreeHide">-->
+                                                        <!--<li><input type="checkbox" name="userManager" title="sdeasdr" value="4"/>场景列表</li>-->
+                                                        <!--<li><input type="checkbox" name="userManager" title="sqweder" value="5"/>场景审核列表</li>-->
+                                                    <!--</ul>-->
+                                                <!--</li>-->
+                                                <!--<li>-->
+                                                    <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+                                                    <!--<input type="checkbox" name="userManager"/>-->
+                                                    <!--需求管理<br/>-->
+                                                    <!--<ul style="list-style:none;" class="roleTreeHide">-->
+                                                        <!--<li><input type="checkbox" name="userManager"/>需求列表</li>-->
+                                                    <!--</ul>-->
+                                                <!--</li>-->
+                                                <!--<li>-->
+                                                    <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+                                                    <!--<input type="checkbox" name="userManager"/>-->
+                                                    <!--内容管理<br/>-->
+                                                    <!--<ul style="list-style:none;" class="roleTreeHide">-->
+                                                        <!--<li><input type="checkbox" name="userManager"/>轮播图列表</li>-->
+                                                        <!--<li><input type="checkbox" name="userManager"/>剧组服务列表</li>-->
+                                                        <!--<li><input type="checkbox" name="userManager"/>反馈信息</li>-->
+                                                    <!--</ul>-->
+                                                <!--</li>-->
+                                                <!--<li>-->
+                                                    <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+                                                    <!--<input type="checkbox"/>-->
+                                                    <!--分类管理<br/>-->
+                                                    <!--<ul style="list-style:none;" class="roleTreeHide">-->
+                                                        <!--<li><input type="checkbox"/>场景地区列表</li>-->
+                                                        <!--<li><input type="checkbox"/>影视剧类型列表</li>-->
+                                                        <!--<li><input type="checkbox"/>场景风格列表</li>-->
+                                                        <!--<li><input type="checkbox"/>场景类型列表</li>-->
+                                                    <!--</ul>-->
+                                                <!--</li>-->
+                                                <!--<li>-->
+                                                    <!--<span class="glyphicon glyphicon-chevron-right"></span>-->
+                                                    <!--<input type="checkbox" class="parentMenu"/>-->
+                                                    <!--权重管理<br/>-->
+                                                    <!--<ul style="list-style:none;" class="roleTreeHide">-->
+                                                        <!--<li><input type="checkbox" class="sonMenu"/>管理员列表</li>-->
+                                                        <!--<li><input type="checkbox" class="sonMenu"/>身份列表</li>-->
+                                                        <!--<li><input type="checkbox" class="sonMenu"/>操作日志</li>-->
+                                                    <!--</ul>-->
+                                                <!--</li>-->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="closeAddAdmin">取消</button>
+                                <button type="submit" class="btn btn-primary" onclick="insertRole();">确定</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/jquery/jquery.validate.min.js}"></script>
+<style>
+    .error{
+        color:red;
+    }
+</style>
+<script>
+    $().ready(function() {
+        $("#form").validate({
+            rules: {
+                roleTitle: {
+                    required:true,
+                },
+                parentMenuBox:{
+                    required:true,
+                }
+            },
+            messages: {
+                roleTitle: {
+                    required:"身份名称不能为空",
+                },
+                parentMenuBox:{
+                    required:"管理模块不能为空",
+                }
+            }
+        });
+        jQuery.validator.addMethod("english", function(value, element) {
+            var chrnum = /^([0-9a-zA-Z\s\.\,]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入英文");
+        jQuery.validator.addMethod("chinese", function(value, element) {
+            var chrnum = /^([0-9\u4E00-\u9FA5\，\。\？\！\；\：\“\”\《\》]+)$/;
+            return this.optional(element) || (chrnum.test(value));
+        }, "只能输入中文");
+    });
+    $(document).ready(function (){
+//        $("#adminMenu").click();
+    });
+    $(document).keydown(function(event){
+        if(event.keyCode == 13){
+            if(isNumber($("#jumpPage").val())){//非数字不能跳转
+                window.location.href = 'getRoleList?accountOrName='+$("#accountOrName").val()+'&pageSize='+$("#pageSize").val()+'&pageNum='+$("#jumpPage").val();
+            }
+        }
+    });
+
+    function getRoleDetailForUpdate(id){
+        $("#myModalLabel").text("编辑身份");
+        $("#roleId").val(id);
+        var modelStr = "";
+        $.ajax({
+            url: "/admin/getModelList",
+            method: "get",
+            success: function(result){
+                if(result.status == 1){
+                    var models = result.data;
+                    for(var i=0;i<models.length;i++){
+                        modelStr += "<li><span class=\"glyphicon glyphicon-chevron-right\"></span><input id='menuId"+models[i].id+"' name='parentMenuBox' class=\"parentMenu\" type=\"checkbox\" value='"+models[i].id+"'/>"+models[i].title+"<br/><ul style=\"list-style:none;\" class=\"roleTreeHide\">";
+                        var modelsSub = models[i].children;
+                        for(var j=0;j<modelsSub.length;j++){
+                            modelStr += "<li><input id='menuId"+modelsSub[j].id+"' name='sonMenuBox' class=\"sonMenu\" type=\"checkbox\" value='"+modelsSub[j].id+"'/>"+modelsSub[j].title+"</li>";
+                        }
+                        modelStr += "</ul></li>";
+                    }
+                    $("#newRoleUl").html(modelStr);
+
+                    $.ajax({
+                        url: "/admin/getRoleMsgById",
+                        method: "get",
+                        data: {
+                            id:id
+                        },
+                        success: function(result){
+                            if(result.status == 1){
+                                $("#roleTitle").val(result.data.title);
+                                var str = result.data.menus;
+                                var menus = str.split(",");
+                                for(var i=0;i<menus.length;i++){
+                                    $("#menuId"+menus[i]).prop("checked",true);
+                                }
+                            }else{
+                                alert(result.message);
+                            }
+                        }
+                    });
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+
+    }
+    function insertRole(){
+        if(!$("#form").validate().form()) {
+            return false;
+        }
+        var arr = [];
+        $("[name='parentMenuBox']:checked").each(function () {
+            arr.push($(this).val());
+        });
+        $("[name='sonMenuBox']:checked").each(function () {
+            arr.push($(this).val());
+        });
+        console.log(arr);
+        $.ajax({
+            url: "/admin/createAndUpdateRole",
+            method: "post",
+            data: {
+                id:$("#roleId").val(),
+                moduleList:arr.toString(),
+                title:$("#roleTitle").val()
+            },
+            success: function(result){
+                if(result.status == 1){
+                    alert(result.message);
+                    window.location.href = 'getRoleList';
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+
+    function getModelList(){
+        $("#myModalLabel").text("新增身份");
+        $("#roleId").val("");
+        $("#roleTitle").val("");
+        var modelStr = "";
+        $.ajax({
+            url: "/admin/getModelList",
+            method: "get",
+            success: function(result){
+                if(result.status == 1){
+                    var models = result.data;
+                    for(var i=0;i<models.length;i++){
+                        modelStr += "<li><span class=\"glyphicon glyphicon-chevron-right\"></span><input name='parentMenuBox' class=\"parentMenu\" type=\"checkbox\" value='"+models[i].id+"'/>"+models[i].title+"<br/><ul style=\"list-style:none;\" class=\"roleTreeHide\">";
+                        var modelsSub = models[i].children;
+                        for(var j=0;j<modelsSub.length;j++){
+                            modelStr += "<li><input name='sonMenuBox' class=\"sonMenu\" type=\"checkbox\" value='"+modelsSub[j].id+"'/>"+modelsSub[j].title+"</li>";
+                        }
+                        modelStr += "</ul></li>";
+                    }
+                    $("#newRoleUl").html(modelStr);
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    }
+
+    function deleteRole(id) {
+        var result = confirm("确认删除该管理员身份?");
+        if(result){
+            $.ajax({
+                url: "/admin/deleteRoleById",
+                method: "post",
+                data: {
+                    id:id
+                },
+                success: function(result){
+                    if(result.status == 1){
+                        alert(result.message);
+                        window.location.href = 'getRoleList';
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+    }
+
+    $(document).on('click',".glyphicon-chevron-right",function () {
+        $(this).toggleClass("glyphicon-chevron-right");
+        $(this).toggleClass("glyphicon-chevron-down");
+        var uld = $(this).parent();
+        $(uld).find("ul").toggleClass("roleTreeShow");
+        $(uld).find("ul").toggleClass("roleTreeHide");
+    });
+    $(document).on('click',".glyphicon-chevron-down",function () {
+        $(this).toggleClass("glyphicon-chevron-right");
+        $(this).toggleClass("glyphicon-chevron-down");
+        var uld = $(this).parent();
+        $(uld).find("ul").toggleClass("roleTreeShow");
+        $(uld).find("ul").toggleClass("roleTreeHide");
+    });
+    $(document).on('click',".parentMenu",function () {
+        var uld = $(this).parent();
+        if($(this).is(':checked')){
+            $(uld).find(".sonMenu").prop("checked",true);
+        }else{
+            $(uld).find(".sonMenu").prop("checked",false);
+        }
+    });
+    $(document).on('click',".sonMenu",function () {
+        var uld = $(this).parent().parent();
+        var sons = $(uld).find(".sonMenu");
+        var result = false;
+        for(var i=0;i<sons.length;i++){
+            if($(sons[i]).is(':checked')){
+                result = true;break;
+            }
+        }
+        $(uld).parent().find(".parentMenu").prop("checked",result);
+    });
+
+    //判断是否为数字方法
+    function isNumber(val){
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        if(regPos.test(val) || regNeg.test(val)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function getRoleList() {
+        if($("#accountOrName").val().trim() != ''){
+            window.location.href = 'getRoleList?pageSize='+$("#pageSize").val()+'&accountOrName='+$("#accountOrName").val();
+        }
+    }
+
+</script>
+</body>
+</html>

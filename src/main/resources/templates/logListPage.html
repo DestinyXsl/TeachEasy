@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/wellcome">注艺租赁管理后台</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" th:each="cookie :${#httpServletRequest.getCookies()}"
+                               th:if="${cookie.getName().equals('name')}"
+                               th:text="${cookie.getValue()}+'，您好'"></a>
+                        </li>
+                        <li>
+                            <a href="/logout"><span class="glyphicon glyphicon-off"></span>&nbsp;登出</a>
+                        </li>
+                        <li>
+                            <a href="#">修改密码</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </nav>
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <div class="panel-group" id="panel-594187">
+                        <div class="panel panel-default" th:each="m : ${menu}">
+                            <div class="panel-heading" th:if="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-826081'+${m.id}">用 户 管 理</a>
+                            </div>
+                            <div  th:if="${m.title} ne ${pageTitle}" th:id="'panel-element-826081'+${m.id}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+
+                            <div class="panel-heading" th:unless="${m.title} ne ${pageTitle}">
+                                <a th:text="${m.title}" class="panel-title" data-toggle="collapse" data-parent="#panel-594187" th:href="'#panel-element-792346'+${m.id}" aria-expanded="true">权 限 管 理</a>
+                            </div>
+                            <div th:unless="${m.title} ne ${pageTitle}" th:id="'panel-element-792346'+${m.id}" class="panel-collapse collapse in" aria-expanded="true">
+                                <div class="panel-body">
+                                    <div th:each="c : ${m.children}"><a th:href="${c.urlPath}" th:text="${c.title}">用户列表</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 column">
+                    <ul class="breadcrumb">
+                        <li>
+                            权限管理
+                        </li>
+                        <li class="active">
+                            操作日志
+                        </li>
+                        <!--<li class="active">-->
+                        <!--Data-->
+                        <!--</li>-->
+                    </ul>
+                    <div class="row clearfix">
+                        <div class="col-md-12 column">
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <input id="nameOrMenu" type="text" class="form-control" placeholder="请输入进行搜索" th:value="${nameOrMenu}">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button" onclick="getLogList();"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-7">
+                                <span>操作时间</span>
+                                <input id="startTime" type="date" class="form-control" style="display: inline-block;width: 150px;" th:value="${startTime}"/>
+                                <span>至</span>
+                                <input id="endTime" type="date" class="form-control" style="display: inline-block;width: 150px;" th:value="${endTime}"/>
+                                <button type="button" class="btn btn-primary" onclick="getLogList();">筛选</button>
+                            </div>
+                        </div>
+                        <!--<div class="col-md-2 column">-->
+                            <!---->
+                        <!--</div>-->
+                    </div>
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    编号
+                                </th>
+                                <th>
+                                    管理员姓名
+                                </th>
+                                <th>
+                                    操作时间
+                                </th>
+                                <th>
+                                    操作菜单
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="a : ${logList.list}">
+                                <td th:text="${a.id}">
+                                    1
+                                </td>
+                                <td th:text="${a.adminName}">
+                                    15060606060
+                                </td>
+                                <td>
+                                    <div th:text="${#dates.format(a.createTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                                </td>
+                                <td>
+                                    <div th:text="${a.operateTitle}"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row clearfix">
+                        <input type="hidden" id="pageNum" th:value="${logList.pageNum}"/>
+                        <input type="hidden" id="pageSize" th:value="${logList.pageSize}"/>
+                        <input type="hidden" id="pages" th:value="${logList.pages}"/>
+                        <div class="col-md-4 column">
+                            <span style="height: inherit;">共   <span th:text="${logList.total}">5</span>    条记录</span>
+                        </div>
+                        <div class="col-md-8 column" th:if="${logList.total > 0}">
+                            <ul class="pagination" style="margin: 0 0;">
+                                <th:block th:if="${logList.pageNum > 1}">
+                                    <li>
+                                        <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum='+${logList.pageNum-1}+'&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}">上一页</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${logList.pages < 9}">
+                                    <li th:each="dayCyc : ${#numbers.sequence(1,logList.pages)}" th:class="${dayCyc == logList.pageNum}? 'active' : ''">
+                                        <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum='+${dayCyc}+'&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${logList.pages >= 9}">
+                                    <li th:if="${logList.pageNum >= 4}" th:class="${1 == logList.pageNum}? 'active' : ''">
+                                        <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum=1&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}">1</a>
+                                    </li>
+                                    <li th:if="${logList.pageNum <= 3}" th:each="dayCyc : ${#numbers.sequence(1,5)}" th:class="${dayCyc == logList.pageNum}? 'active' : ''">
+                                        <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum='+${dayCyc}+'&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}" th:text="${dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${logList.pageNum >= 5}">
+                                        <span>...</span>
+                                    </li>
+                                    <th:block th:if="${logList.pageNum >= 4 and logList.pageNum <= logList.pages-3}">
+                                        <li th:each="dd : ${#numbers.sequence(-2,2)}" th:class="${logList.pageNum+dd == logList.pageNum}? 'active' : ''">
+                                            <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum='+${logList.pageNum+dd}+'&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}" th:text="${logList.pageNum+dd}">1</a>
+                                        </li>
+                                    </th:block>
+                                    <li th:if="${logList.pageNum <= logList.pages - 4}">
+                                        <span>...</span>
+                                    </li>
+                                    <li th:if="${logList.pageNum >= logList.pages - 2}" th:each="dayCyc : ${#numbers.sequence(-4,0)}" th:class="${logList.pages + dayCyc == logList.pageNum}? 'active' : ''">
+                                        <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum='+${logList.pages + dayCyc}+'&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}" th:text="${logList.pages + dayCyc}">1</a>
+                                    </li>
+                                    <li th:if="${logList.pageNum <= logList.pages - 3}" th:class="${logList.pages == logList.pageNum}? 'active' : ''">
+                                        <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum='+${logList.pages}+'&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}" th:text="${logList.pages}">1</a>
+                                    </li>
+                                </th:block>
+                                <th:block th:if="${logList.pageNum < logList.pages}">
+                                    <li>
+                                        <a th:href="'getOperateLogList?pageSize='+${logList.pageSize}+'&pageNum='+${logList.pageNum+1}+'&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}">下一页</a>
+                                    </li>
+                                </th:block>
+                                <li>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" th:text="${logList.pageSize}+'条/页'">10条/页
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a th:href="'getOperateLogList?pageSize=10&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}">10条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getOperateLogList?pageSize=20&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}">20条/页</a>
+                                            </li>
+                                            <li>
+                                                <a th:href="'getOperateLogList?pageSize=30&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}">30条/页</a>
+                                            </li>
+                                            <!--<li class="divider"></li>-->
+                                            <li>
+                                                <a th:href="'getOperateLogList?pageSize=40&nameOrMenu='+${nameOrMenu}+'&startTime='+${startTime}+'&endTime='+${endTime}">40条/页</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    跳至<input id="jumpPage" type="text" class="form-control" style="width: 50px;display: inline-block;"/>页
+                                    跳至<input id="jumpPage" type="text" class="form-control" style="width: 50px;display: inline-block;"/>页
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/jquery/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script>
+//    $(document).ready(function (){
+////        $("#adminMenu").click();
+//    });
+    $(document).keydown(function(event){
+        if(event.keyCode == 13){
+            if(isNumber($("#jumpPage").val())){//非数字不能跳转
+                window.location.href = 'getOperateLogList?startTime='+$("#startTime").val()+'&endTime='+$("#endTime").val()+'&nameOrMenu='+$("#nameOrMenu").val()+'&pageSize='+$("#pageSize").val()+'&pageNum='+$("#jumpPage").val();
+            }
+        }
+    });
+    //判断是否为数字方法
+    function isNumber(val){
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        if(regPos.test(val) || regNeg.test(val)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function getLogList() {
+        window.location.href = 'getOperateLogList?pageSize='+$("#pageSize").val()+'&nameOrMenu='+$("#nameOrMenu").val().trim()+'&startTime='+$("#startTime").val()+'&endTime='+$("#endTime").val();
+    }
+
+</script>
+</body>
+</html>
